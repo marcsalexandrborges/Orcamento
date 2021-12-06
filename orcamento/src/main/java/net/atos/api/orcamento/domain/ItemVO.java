@@ -13,9 +13,4 @@ public class ItemVO {
 	@NotNull(message = "Campo preço unitario não pode ser nulo")
 	private Double precoUnitario;
 	
-
-	
-	
-	
-
 }

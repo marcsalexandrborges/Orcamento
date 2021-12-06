@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 public class OrcamentoVO {
 	
-	private Long identificador;
+	private Long id;
 	
 	@NotNull(message = "Campo numero orcamento não pode ser nulo")
 	private Integer numeroOrcamento;

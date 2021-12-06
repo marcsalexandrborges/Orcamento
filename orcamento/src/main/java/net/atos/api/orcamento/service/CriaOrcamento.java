@@ -6,28 +6,31 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.atos.api.orcamento.domain.OrcamentoVO;
-import net.atos.api.orcamento.repository.OrcamentoRepository;
+import net.atos.api.orcamento.factory.OrcamentoFactory;
+import net.atos.api.orcamento.repository.IOrcamentoRepository;
+import net.atos.api.orcamento.repository.OrcamentoEntity;
 
 	@Service
 	public class CriaOrcamento  {
 		
 		private Validator validator;
 		
-		private OrcamentoRepository orcamentoRepository;
+		private IOrcamentoRepository orcamentoRepository;
 		
-		public CriaOrcamento(Validator validator, OrcamentoRepository repository) {
+		public CriaOrcamento(Validator validator, IOrcamentoRepository repository) {
 			this.validator = validator;
 			this.orcamentoRepository = repository;
 		}
 	
 		@Transactional
-		public void criar(OrcamentoVO orcamento) {
+		public OrcamentoVO criar(@NotNull(message = "Orçamento não pode ser nulo") OrcamentoVO orcamento) {
 
 			Set<ConstraintViolation<OrcamentoVO>> 
 			validateMessages = this.validator.validate(orcamento);
@@ -43,6 +46,14 @@ import net.atos.api.orcamento.repository.OrcamentoRepository;
 			if (orcamento.getNumeroOrcamento() == null) {
 				throw new BadRequestException("O numero do orcamento não pode ser nulo.");
 			}
+			
+			OrcamentoEntity orcamentoEntity = new OrcamentoFactory(orcamento).toEntity();				
+
+			orcamentoRepository.save(orcamentoEntity);		
+			
+			orcamento.setId(orcamentoEntity.getId());	
+			
+			return orcamento; 
 	
 		
 	}
