@@ -53,7 +53,7 @@ public class OrcamentoEntity implements Serializable {
 	@NotNull(message = "Campo item não pode ser nulo")
 	@Size(min = 1, message = "Campo item não pode ser nulo")
 	@Valid
-	@OneToMany(mappedBy = "identificador.orcamento", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "id.orcamento", cascade = CascadeType.ALL)
 	private List<ItemEntity> itens;
 	
 	@Column(name = "QTD_ITENS")
