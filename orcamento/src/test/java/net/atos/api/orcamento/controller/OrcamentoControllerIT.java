@@ -1,8 +1,12 @@
 package net.atos.api.orcamento.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.MediaType;
@@ -18,12 +22,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.atos.api.orcamento.domain.ItemVO;
 import net.atos.api.orcamento.domain.OrcamentoVO;
 
 @ExtendWith(SpringExtension.class)
@@ -67,4 +73,52 @@ class OrcamentoControllerIT {
 
 	}
 
+	 @Test    
+	    @DisplayName("Busca Orcamento")
+	    public void testOrcamentoCriado() throws Exception {
+	    	OrcamentoVO orcamento =  new OrcamentoVO();
+			orcamento.setValor(BigDecimal.ONE);
+			orcamento.setDataEmissao(LocalDate.now());
+			orcamento.setNumeroOrcamento(1);
+			orcamento.setQuantidade(3);
+			
+			
+			
+			ItemVO item = new ItemVO();
+			item.setCodigoItem(45);
+			item.setPrecoUnitario(3.5);
+			orcamento.add(item);
+			
+			
+	    	
+	    	ResultActions resultCreated = this.mockMvc.perform(
+	    			MockMvcRequestBuilders.post(URI_ORCAMENTO)
+	                .accept(MediaType.APPLICATION_JSON)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .content(mapper.writeValueAsString(orcamento))
+	    			).andDo(print())
+	    			.andExpect(status().isCreated());
+	    	
+	    	OrcamentoVO createOrcamento = mapper.readValue(resultCreated
+	    						.andReturn()
+	    						.getResponse()
+	    						.getContentAsString(),
+	    						OrcamentoVO.class);
+	    	
+	    	ResultActions resultConsulted = this.mockMvc.perform(
+	    			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/{id}"),
+	    					createOrcamento.getId()))
+	    					.andDo(print())
+	    					.andExpect(status().isOk());
+	    	
+	    	OrcamentoVO searchOrcamento = mapper.readValue(resultConsulted
+					.andReturn()
+					.getResponse()
+					.getContentAsString(),
+					OrcamentoVO.class);
+	    	
+	    	assertEquals(2,searchOrcamento.getItens().size());
+	    	
+	    }
+	    
 }
