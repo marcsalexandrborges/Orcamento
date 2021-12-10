@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.MediaType;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.atos.api.orcamento.domain.ItemVO;
@@ -74,7 +76,7 @@ class OrcamentoControllerIT {
 	}
 
 	 @Test    
-	    @DisplayName("Busca Orcamento")
+	    @DisplayName("Cria Orcamento")
 	    public void testOrcamentoCriado() throws Exception {
 	    	OrcamentoVO orcamento =  new OrcamentoVO();
 			orcamento.setValor(BigDecimal.ONE);
@@ -121,4 +123,24 @@ class OrcamentoControllerIT {
 	    	
 	    }
 	    
+	 @Test    
+	    @DisplayName("Consulta orcamento por item")
+	    public void testBuscaOrcamentoItem() throws Exception {
+	    	ResultActions resultConsulted = this.mockMvc.perform(
+	    			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/itens/{itens.codigoItem}"),
+	    					"1"))
+	    					.andDo(print())
+	    					.andExpect(status().isOk());	
+	    	
+	    	
+	    	List<OrcamentoVO> searchOrcamento = mapper.readValue(resultConsulted
+					.andReturn()
+					.getResponse()
+					.getContentAsString(),
+					new TypeReference<List<OrcamentoVO>>() { });
+	    	
+	    	System.out.println("(Consulta por item) Quantidade de orcamentos com o item 1 = "+searchOrcamento.size());
+	    	assertNotNull(searchOrcamento);
+	    }
+
 }

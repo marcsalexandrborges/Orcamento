@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
+import net.atos.api.orcamento.domain.ItemVO;
 import net.atos.api.orcamento.domain.OrcamentoVO;
+import net.atos.api.orcamento.service.BuscaOrcamento;
 import net.atos.api.orcamento.service.CriaOrcamento;
 
 @RestController
@@ -26,6 +28,7 @@ import net.atos.api.orcamento.service.CriaOrcamento;
 public class OrcamentoController {
 
 	private List<CriaOrcamento> criaOrcamentoStrategies;
+	private BuscaOrcamento buscaOrcamentoService;
 
 	public OrcamentoController(List<CriaOrcamento> strategies) {
 		super();
@@ -48,6 +51,16 @@ public class OrcamentoController {
 				.buildAndExpand(createdOrcamento.getId()).toUri();
 
 		return ResponseEntity.created(uri).body(createdOrcamento);
+	}
+	
+	@GetMapping(value = "/itens/{itens.codigoItem}", produces = { MediaType.APPLICATION_JSON })
+	@Operation(description = "Consulta orcamentos por itens")
+	public ResponseEntity<List<OrcamentoVO>> getOrcamentoPorItem(@PathVariable("itens") ItemVO item) {
+
+		List<OrcamentoVO> searchOrcamento = this.buscaOrcamentoService.porItem(item);
+
+		return ResponseEntity.ok(searchOrcamento);
+
 	}
 
 //	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON })
