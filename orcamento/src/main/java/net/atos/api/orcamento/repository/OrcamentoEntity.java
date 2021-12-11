@@ -34,8 +34,8 @@ import net.atos.api.orcamento.domain.ItemVO;
 @Entity
 @Table(name = "TB_ORCAMENTO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="OP_ORCAMENTO", 
-	discriminatorType = DiscriminatorType.STRING)
+//@DiscriminatorColumn(name="OP_ORCAMENTO", 
+//	discriminatorType = DiscriminatorType.STRING)
 public class OrcamentoEntity implements Serializable {
 	
 	private static final long serialVersionUID = -6306260709157057159L;
@@ -45,10 +45,6 @@ public class OrcamentoEntity implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_orcamento")	
 	@SequenceGenerator(name = "sq_orcamento",sequenceName = "sequence_orcamento", allocationSize = 1, initialValue = 1)
 	private Long id;
-	
-	@Column(name = "NUM_ORCAMENTO")
-	@NotNull(message = "Campo numero orcamento não pode ser nulo")
-	private Integer numeroOrcamento;
 
 	@NotNull(message = "Campo item não pode ser nulo")
 	@Size(min = 1, message = "Campo item não pode ser nulo")

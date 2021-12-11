@@ -11,15 +11,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
 public class OrcamentoVO {
 	
 	private Long id;
-	
-	@NotNull(message = "Campo numero orcamento não pode ser nulo")
-	private Integer numeroOrcamento;
 
 	@NotNull(message = "Campo item não pode ser nulo")
 	@Size(min = 1, message = "Campo item não pode ser nulo")
@@ -34,6 +33,7 @@ public class OrcamentoVO {
 	private BigDecimal valor;
 	
 	@NotNull(message = "Campo data de emissão não pode ser nula")
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private LocalDate dataEmissao;
 	
 	public void add(ItemVO item) {

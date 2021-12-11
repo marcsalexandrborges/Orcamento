@@ -26,7 +26,6 @@ class OrcamentoFactoryTest {
 	public void testCriarVoToEntity() {
 		OrcamentoVO orcamento =  new OrcamentoVO();
 		orcamento.setDataEmissao(LocalDate.now());	
-		orcamento.setNumeroOrcamento(1);
 		orcamento.setQuantidade(1);
 		orcamento.setValor(BigDecimal.ONE);
 		
@@ -42,9 +41,6 @@ class OrcamentoFactoryTest {
 		assertNotNull(orcEntity);
 		assertNotNull(orcEntity.getDataEmissao());
 		assertEquals(orcamento.getDataEmissao(),orcEntity.getDataEmissao());
-		
-		assertNotNull(orcEntity.getNumeroOrcamento());
-		assertEquals(orcamento.getNumeroOrcamento(),orcEntity.getNumeroOrcamento());
 		
 		assertNotNull(orcEntity.getQuantidade());
 		assertEquals(orcamento.getQuantidade(),orcEntity.getQuantidade());
@@ -63,9 +59,6 @@ class OrcamentoFactoryTest {
 		assertNotNull(voCriado);
 		assertNotNull(voCriado.getDataEmissao());
 		assertEquals(orcamento.getDataEmissao(),voCriado.getDataEmissao());
-		
-		assertNotNull(voCriado.getNumeroOrcamento());
-		assertEquals(orcamento.getNumeroOrcamento(),voCriado.getNumeroOrcamento());
 		
 		assertNotNull(voCriado.getQuantidade());
 		assertEquals(orcamento.getQuantidade(),voCriado.getQuantidade());

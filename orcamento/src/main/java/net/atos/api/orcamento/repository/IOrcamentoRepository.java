@@ -1,16 +1,16 @@
 package net.atos.api.orcamento.repository;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import net.atos.api.orcamento.domain.ItemVO;
-
 @Repository
-public interface IOrcamentoRepository extends CrudRepository<OrcamentoEntity, Long> {
-
-	public Optional<List<OrcamentoEntity>> findByItem(ItemVO item);
+public interface IOrcamentoRepository extends PagingAndSortingRepository<OrcamentoEntity, Long> {
+	
+	public Page<OrcamentoEntity> findByDataEmissaoBetween(LocalDate dataInicio, LocalDate dataFim, Pageable pageable);
 
 }

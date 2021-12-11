@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.MediaType;
@@ -31,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.atos.api.orcamento.controller.page.PaginatedResponse;
 import net.atos.api.orcamento.domain.ItemVO;
 import net.atos.api.orcamento.domain.OrcamentoVO;
 
@@ -39,8 +40,7 @@ import net.atos.api.orcamento.domain.OrcamentoVO;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource("classpath:application-test.properties")
 @ActiveProfiles("test")
-
-class OrcamentoControllerIT {
+public class OrcamentoControllerIT {
 
 	private static final String URI_ORCAMENTO = "/v1/orcamento";
 
@@ -69,78 +69,128 @@ class OrcamentoControllerIT {
 		OrcamentoVO orcamento = new OrcamentoVO();
 
 		this.mockMvc
-				.perform(MockMvcRequestBuilders.post(URI_ORCAMENTO).accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(orcamento)))
-				.andDo(print()).andExpect(status().isBadRequest());
+				.perform(MockMvcRequestBuilders.post(URI_ORCAMENTO)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(orcamento)))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
 
 	}
 
+	@Test    
+    @DisplayName("Cria Orcamento")
+    public void testOrcamentoCriado() throws Exception {
+    	OrcamentoVO orcamento =  new OrcamentoVO();
+		orcamento.setValor(BigDecimal.ONE);
+		orcamento.setDataEmissao(LocalDate.now());
+		orcamento.setQuantidade(3);
+		
+		ItemVO item = new ItemVO();
+		item.setCodigoItem(45);
+		item.setPrecoUnitario(3.5);
+		orcamento.add(item);
+    	
+    	ResultActions resultCreated = this.mockMvc.perform(
+    			MockMvcRequestBuilders.post(URI_ORCAMENTO)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(orcamento))
+    			).andDo(print())
+    			.andExpect(status().isCreated());
+    	
+    	OrcamentoVO orcamentoCriado = mapper.readValue(resultCreated
+    						.andReturn()
+    						.getResponse()
+    						.getContentAsString(),
+    						OrcamentoVO.class);
+    	
+    	ResultActions resultConsulted = this.mockMvc.perform(
+			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/{id}"),
+					orcamentoCriado.getId()))
+					.andDo(print())
+					.andExpect(status().isOk());
+    	
+    	OrcamentoVO orcamentoConsultado = mapper.readValue(resultConsulted
+				.andReturn()
+				.getResponse()
+				.getContentAsString(),
+				OrcamentoVO.class);
+    	
+    	assertEquals(1,orcamentoConsultado.getItens().size());
+    	
+    }
+	
+	@Test    
+    @DisplayName("Cria Orcamento com dois itens")
+    public void testOrcamentoCriadoComDoisItens() throws Exception {
+    	OrcamentoVO orcamento =  new OrcamentoVO();
+		orcamento.setValor(BigDecimal.ONE);
+		orcamento.setDataEmissao(LocalDate.now());
+		orcamento.setQuantidade(3);
+		
+		ItemVO item1 = new ItemVO();
+		item1.setCodigoItem(45);
+		item1.setPrecoUnitario(3.5);
+		orcamento.add(item1);
+		
+		ItemVO item2 = new ItemVO();
+		item2.setCodigoItem(1009);
+		item2.setPrecoUnitario(4.0);
+		orcamento.add(item2);
+    	
+    	ResultActions resultCreated = this.mockMvc.perform(
+    			MockMvcRequestBuilders.post(URI_ORCAMENTO)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(orcamento))
+    			).andDo(print())
+    			.andExpect(status().isCreated());
+    	
+    	OrcamentoVO orcamentoCriado = mapper.readValue(resultCreated
+    						.andReturn()
+    						.getResponse()
+    						.getContentAsString(),
+    						OrcamentoVO.class);
+    	
+    	ResultActions resultConsulted = this.mockMvc.perform(
+			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/{id}"),
+					orcamentoCriado.getId()))
+					.andDo(print())
+					.andExpect(status().isOk());
+    	
+    	OrcamentoVO orcamentoConsultado = mapper.readValue(resultConsulted
+				.andReturn()
+				.getResponse()
+				.getContentAsString(),
+				OrcamentoVO.class);
+    	
+    	assertEquals(2,orcamentoConsultado.getItens().size());
+    	
+    }
+	
 	 @Test    
-	    @DisplayName("Cria Orcamento")
-	    public void testOrcamentoCriado() throws Exception {
-	    	OrcamentoVO orcamento =  new OrcamentoVO();
-			orcamento.setValor(BigDecimal.ONE);
-			orcamento.setDataEmissao(LocalDate.now());
-			orcamento.setNumeroOrcamento(1);
-			orcamento.setQuantidade(3);
-			
-			
-			
-			ItemVO item = new ItemVO();
-			item.setCodigoItem(45);
-			item.setPrecoUnitario(3.5);
-			orcamento.add(item);
-			
-			
-	    	
-	    	ResultActions resultCreated = this.mockMvc.perform(
-	    			MockMvcRequestBuilders.post(URI_ORCAMENTO)
-	                .accept(MediaType.APPLICATION_JSON)
-	                .contentType(MediaType.APPLICATION_JSON)
-	                .content(mapper.writeValueAsString(orcamento))
-	    			).andDo(print())
-	    			.andExpect(status().isCreated());
-	    	
-	    	OrcamentoVO createOrcamento = mapper.readValue(resultCreated
-	    						.andReturn()
-	    						.getResponse()
-	    						.getContentAsString(),
-	    						OrcamentoVO.class);
-	    	
-	    	ResultActions resultConsulted = this.mockMvc.perform(
-	    			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/{id}"),
-	    					createOrcamento.getId()))
-	    					.andDo(print())
-	    					.andExpect(status().isOk());
-	    	
-	    	OrcamentoVO searchOrcamento = mapper.readValue(resultConsulted
-					.andReturn()
-					.getResponse()
-					.getContentAsString(),
-					OrcamentoVO.class);
-	    	
-	    	assertEquals(2,searchOrcamento.getItens().size());
-	    	
-	    }
-	    
-	 @Test    
-	    @DisplayName("Consulta orcamento por item")
-	    public void testBuscaOrcamentoItem() throws Exception {
-	    	ResultActions resultConsulted = this.mockMvc.perform(
-	    			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/itens/{itens.codigoItem}"),
-	    					"1"))
-	    					.andDo(print())
-	    					.andExpect(status().isOk());	
-	    	
-	    	
-	    	List<OrcamentoVO> searchOrcamento = mapper.readValue(resultConsulted
-					.andReturn()
-					.getResponse()
-					.getContentAsString(),
-					new TypeReference<List<OrcamentoVO>>() { });
-	    	
-	    	System.out.println("(Consulta por item) Quantidade de orcamentos com o item 1 = "+searchOrcamento.size());
-	    	assertNotNull(searchOrcamento);
-	    }
+    @DisplayName("Consulta orcamento por periodo")
+    public void testBuscaOrcamentoPorPeriodo() throws Exception {
+    	String dataEmissao = LocalDate.now().minusDays(1l).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    	String dataFim = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    	   	
+    	
+    	ResultActions resultConsulted = this.mockMvc.perform(
+    			MockMvcRequestBuilders.get(URI_ORCAMENTO.concat("/emissao-periodos/{dataEmissao}/{dataFim}"),
+    					dataEmissao,dataFim))
+    					.andDo(print())
+    					.andExpect(status().isOk());	
+    	
+    	
+    	PaginatedResponse<OrcamentoVO> orcamentoConsultado = mapper.readValue(resultConsulted
+				.andReturn()
+				.getResponse()
+				.getContentAsString(),
+				new TypeReference<PaginatedResponse<OrcamentoVO>>() {});
+    	
+    	System.out.println("(Consulta por periodo) Quantidade de orcamento = "+orcamentoConsultado.getSize());
+    	assertNotNull(orcamentoConsultado);
+    }
 
 }

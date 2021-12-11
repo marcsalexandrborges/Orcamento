@@ -18,7 +18,7 @@ import net.atos.api.orcamento.repository.IOrcamentoRepository;
 import net.atos.api.orcamento.repository.OrcamentoEntity;
 
 	@Service
-	public class CriaOrcamento  {
+	public class CriaOrcamento implements ICriaOrcamento  {
 		
 		private Validator validator;
 		
@@ -43,10 +43,6 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 				throw new BadRequestException("A data de emissão do orcamento deve ser atual.");			
 			}
 			
-			if (orcamento.getNumeroOrcamento() == null) {
-				throw new BadRequestException("O numero do orcamento não pode ser nulo.");
-			}
-			
 			OrcamentoEntity orcamentoEntity = new OrcamentoFactory(orcamento).toEntity();				
 
 			orcamentoRepository.save(orcamentoEntity);		
@@ -56,6 +52,11 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 			return orcamento; 
 	
 		
+	}
+	
+	@Override
+	public boolean isValid(Integer numOrcamento) {
+		return numOrcamento > 0;	
 	}
 
 }

@@ -86,15 +86,14 @@ class CriaOrcamentoTest {
 		var assertThrows = assertThrows(ConstraintViolationException.class, ()->
 							criaOrcamento.criar(orcamento));
 		
-		assertEquals(5, assertThrows.getConstraintViolations().size());
+		assertEquals(4, assertThrows.getConstraintViolations().size());
 		List<String> mensagens = assertThrows.getConstraintViolations()
 		     .stream()
 		     .map(ConstraintViolation::getMessage)
 		     .collect(Collectors.toList());
 
 
-		assertThat(mensagens, hasItems("Campo numero orcamento não pode ser nulo",
-				"Campo item não pode ser nulo",
+		assertThat(mensagens, hasItems("Campo item não pode ser nulo",
 				"Campo quantidade não pode ser nulo",
 				"Campo valor do orçamento não pode ser nulo",
 				"Campo data de emissão não pode ser nula"
@@ -110,7 +109,6 @@ class CriaOrcamentoTest {
 		OrcamentoVO orcamento =  new OrcamentoVO();
 		orcamento.setDataEmissao(LocalDate.now());
 		orcamento.setId(1L);
-		orcamento.setNumeroOrcamento(1);
 		orcamento.setQuantidade(1);
 		orcamento.setValor(BigDecimal.ONE);
 		
@@ -140,7 +138,6 @@ class CriaOrcamentoTest {
 		OrcamentoVO orcamento =  new OrcamentoVO();
 		orcamento.setDataEmissao(LocalDate.now().minusDays(1l));		
 		orcamento.setId(1L);
-		orcamento.setNumeroOrcamento(1);
 		orcamento.setQuantidade(1);
 		orcamento.setValor(BigDecimal.ONE);
 		
@@ -167,7 +164,6 @@ class CriaOrcamentoTest {
 		OrcamentoVO orcamento =  new OrcamentoVO();
 		orcamento.setDataEmissao(LocalDate.now());		
 		orcamento.setId(1L);
-		orcamento.setNumeroOrcamento(1);
 		orcamento.setQuantidade(1);
 		orcamento.setValor(BigDecimal.ONE);
 		

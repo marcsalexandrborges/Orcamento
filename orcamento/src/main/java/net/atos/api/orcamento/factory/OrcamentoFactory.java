@@ -26,7 +26,6 @@ public class OrcamentoFactory {
 	private OrcamentoVO transformaVO(OrcamentoEntity orcEntity) {
 		OrcamentoVO orcVO = new OrcamentoVO();
 		orcVO.setDataEmissao(orcEntity.getDataEmissao());
-		orcVO.setNumeroOrcamento(orcEntity.getNumeroOrcamento());
 		orcVO.setQuantidade(orcEntity.getQuantidade());
 		orcVO.setValor(orcEntity.getValor());
 		
@@ -48,7 +47,6 @@ public class OrcamentoFactory {
 	private OrcamentoEntity transformaEntity(OrcamentoVO orcamento) {
 		OrcamentoEntity orcEntity = new OrcamentoEntity();
 		orcEntity.setDataEmissao(orcamento.getDataEmissao());
-		orcEntity.setNumeroOrcamento(orcamento.getNumeroOrcamento());
 		orcEntity.setQuantidade(orcamento.getQuantidade());
 		orcEntity.setValor(orcamento.getValor());
 		
