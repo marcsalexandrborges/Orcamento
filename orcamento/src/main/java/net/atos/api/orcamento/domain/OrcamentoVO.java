@@ -1,6 +1,5 @@
 package net.atos.api.orcamento.domain;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -25,16 +25,15 @@ public class OrcamentoVO {
 	@Valid
 	private List<ItemVO> itens;
 	
-	@NotNull(message = "Campo quantidade não pode ser nulo")
-	private Integer quantidade;
-	
-	@NotNull(message="Campo valor do orçamento não pode ser nulo")
 	@Positive
-	private BigDecimal valor;
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	private Double valor;
 	
-	@NotNull(message = "Campo data de emissão não pode ser nula")
-	@JsonFormat(pattern="dd/MM/yyyy")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDate dataEmissao;
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	private String status;
 	
 	public void add(ItemVO item) {
 		List<ItemVO> itensOrcamento = 

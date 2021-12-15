@@ -82,13 +82,15 @@ public class OrcamentoControllerIT {
     @DisplayName("Cria Orcamento")
     public void testOrcamentoCriado() throws Exception {
     	OrcamentoVO orcamento =  new OrcamentoVO();
-		orcamento.setValor(BigDecimal.ONE);
+		orcamento.setValor(10.0);
 		orcamento.setDataEmissao(LocalDate.now());
-		orcamento.setQuantidade(3);
 		
 		ItemVO item = new ItemVO();
 		item.setCodigoItem(45);
 		item.setPrecoUnitario(3.5);
+		item.setDescricao("Coca-cola");
+		item.setQuantidade(4);
+		item.setValorItens(40.0);
 		orcamento.add(item);
     	
     	ResultActions resultCreated = this.mockMvc.perform(
@@ -125,18 +127,23 @@ public class OrcamentoControllerIT {
     @DisplayName("Cria Orcamento com dois itens")
     public void testOrcamentoCriadoComDoisItens() throws Exception {
     	OrcamentoVO orcamento =  new OrcamentoVO();
-		orcamento.setValor(BigDecimal.ONE);
+		orcamento.setValor(10.0);
 		orcamento.setDataEmissao(LocalDate.now());
-		orcamento.setQuantidade(3);
 		
 		ItemVO item1 = new ItemVO();
 		item1.setCodigoItem(45);
 		item1.setPrecoUnitario(3.5);
+		item1.setDescricao("Coca-cola");
+		item1.setQuantidade(4);
+		item1.setValorItens(40.0);
 		orcamento.add(item1);
 		
 		ItemVO item2 = new ItemVO();
 		item2.setCodigoItem(1009);
 		item2.setPrecoUnitario(4.0);
+		item2.setDescricao("Coca-cola");
+		item2.setQuantidade(4);
+		item2.setValorItens(40.0);
 		orcamento.add(item2);
     	
     	ResultActions resultCreated = this.mockMvc.perform(
@@ -169,7 +176,7 @@ public class OrcamentoControllerIT {
     	
     }
 	
-	 @Test    
+	@Test    
     @DisplayName("Consulta orcamento por periodo")
     public void testBuscaOrcamentoPorPeriodo() throws Exception {
     	String dataEmissao = LocalDate.now().minusDays(1l).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));

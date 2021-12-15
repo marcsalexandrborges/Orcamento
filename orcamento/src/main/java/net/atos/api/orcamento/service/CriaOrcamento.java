@@ -7,12 +7,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.atos.api.orcamento.domain.OrcamentoVO;
+import net.atos.api.orcamento.domain.StatusEnum;
 import net.atos.api.orcamento.factory.OrcamentoFactory;
 import net.atos.api.orcamento.repository.IOrcamentoRepository;
 import net.atos.api.orcamento.repository.OrcamentoEntity;
@@ -36,27 +36,33 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 			validateMessages = this.validator.validate(orcamento);
 
 			if (!validateMessages.isEmpty()) {
+				orcamento.setStatus(StatusEnum.INVALIDO.getDescricao());
 				throw new ConstraintViolationException("Orçamento Inválido",validateMessages);
 			}
-
-			if (!orcamento.getDataEmissao().isEqual(LocalDate.now())) {
-				throw new BadRequestException("A data de emissão do orcamento deve ser atual.");			
-			}
 			
-			OrcamentoEntity orcamentoEntity = new OrcamentoFactory(orcamento).toEntity();				
-
+			orcamento.setStatus(StatusEnum.VALIDO.getDescricao());
+			
+			OrcamentoEntity orcamentoEntity = new OrcamentoFactory(orcamento).toEntity();	
+			
+			
+			if(!orcamentoEntity.getDataEmissao().isAfter(LocalDate.now().minusDays(7L))) {
+				orcamento.setStatus(StatusEnum.EXPIRADO.getDescricao());
+			}
+								
+			
 			orcamentoRepository.save(orcamentoEntity);		
 			
-			orcamento.setId(orcamentoEntity.getId());	
+			orcamento = new OrcamentoFactory(orcamentoEntity).toVO();
 			
 			return orcamento; 
 	
 		
-	}
+		}
 	
-	@Override
-	public boolean isValid(Integer numOrcamento) {
-		return numOrcamento > 0;	
-	}
+		@Override
+		public boolean isValid(Integer numOrcamento) {
+			return numOrcamento > 0;	
+		}
+		
 
 }

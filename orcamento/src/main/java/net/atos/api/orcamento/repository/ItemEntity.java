@@ -5,10 +5,13 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
+import net.atos.api.orcamento.domain.ItemVO;
+import net.atos.api.orcamento.domain.OrcamentoVO;
 
 @Data
 @Entity
@@ -30,4 +33,28 @@ public class ItemEntity implements Serializable {
 	@Column(name = "PRECO_UNITARIO")
 	@NotNull(message = "Campo preço unitario não pode ser nulo")
 	private Double precoUnitario;
+	
+	@Column(name = "DESCRICAO_ITEM")
+	@NotNull(message = "Campo descricao não pode ser nulo")
+	private String descricao;
+	
+	@Column(name = "QTD_ITENS")
+	@NotNull(message = "Campo quantidade não pode ser nulo")
+	private Integer quantidade;
+	
+	@Column(name = "VALOR_ITENS")
+	private Double valorItens;
+	
+	@PrePersist
+	public void valorTotalItem() {
+		this.setValorItens(this.getValorTotalItens());		
+	}
+	
+	public Double getValorTotalItens() {
+		Double total = 0.0;
+		total = this.getPrecoUnitario() * this.getQuantidade();
+		return total;		
+	}
+	
 }
+                    

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,23 +21,27 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Data;
 import net.atos.api.orcamento.domain.ItemVO;
+import net.atos.api.orcamento.domain.OrcamentoVO;
 
 
 @Data
 @Entity
 @Table(name = "TB_ORCAMENTO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name="OP_ORCAMENTO", 
-//	discriminatorType = DiscriminatorType.STRING)
 public class OrcamentoEntity implements Serializable {
 	
 	private static final long serialVersionUID = -6306260709157057159L;
@@ -52,26 +58,31 @@ public class OrcamentoEntity implements Serializable {
 	@OneToMany(mappedBy = "id.orcamento", cascade = CascadeType.ALL)
 	private List<ItemEntity> itens;
 	
-	@Column(name = "QTD_ITENS")
-	@NotNull(message = "Campo quantidade não pode ser nulo")
-	@Positive
-	private Integer quantidade;
-	
 	@Column(name = "VALOR_ORCAMENTO")
-	@NotNull(message="Campo valor do orçamento não pode ser nulo")
 	@Positive
-	private BigDecimal valor;
+	private Double valor;
 	
 	@Column(name = "DT_EMISSAO")
-	@NotNull(message = "Campo data de emissão não pode ser nula")
 	private LocalDate dataEmissao;
 	
+	@Column(name = "ORCAMENTO_STATUS")
+	private String status;
+	 
 	public void add(ItemEntity item) {
 		List<ItemEntity> itensOrcamento = 
 				Optional.ofNullable(this.getItens()).orElseGet(()->new ArrayList());		
 		itensOrcamento.add(item);
 		
 		this.itens = itensOrcamento; 
+	}
+	
+	@PrePersist
+	public void somaValorOrcamento() {
+		Double valorOrcamento = 0.0;
+		for (ItemEntity itemEntity : this.getItens()) {
+			valorOrcamento +=  itemEntity.getValorTotalItens();
+		}		
+		this.setValor(valorOrcamento);
 	}
 	
 	@Override

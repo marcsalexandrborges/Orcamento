@@ -1,5 +1,9 @@
 package net.atos.api.orcamento.factory;
 
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.atos.api.orcamento.domain.ItemVO;
@@ -25,12 +29,14 @@ public class OrcamentoFactory {
 
 	private OrcamentoVO transformaVO(OrcamentoEntity orcEntity) {
 		OrcamentoVO orcVO = new OrcamentoVO();
+		orcVO.setId(orcEntity.getId());
 		orcVO.setDataEmissao(orcEntity.getDataEmissao());
-		orcVO.setQuantidade(orcEntity.getQuantidade());
 		orcVO.setValor(orcEntity.getValor());
+		orcVO.setStatus(orcEntity.getStatus());
 		
-		AtomicInteger numeroItem = new AtomicInteger(); 
-		orcEntity.getItens().stream().forEach(item -> 
+		AtomicInteger numeroItem = new AtomicInteger(); 		
+		List<ItemEntity> itens = Optional.ofNullable(orcEntity.getItens()).orElseGet(ArrayList::new);
+		itens.stream().forEach(item -> 
 				this.construirItemVO(orcVO, numeroItem, item));
 		
 		return orcVO;
@@ -40,6 +46,9 @@ public class OrcamentoFactory {
 		ItemVO itemVO = new ItemVO();
 		itemVO.setCodigoItem(item.getCodigoItem());
 		itemVO.setPrecoUnitario(item.getPrecoUnitario());
+		itemVO.setDescricao(item.getDescricao());
+		itemVO.setQuantidade(item.getQuantidade());
+		itemVO.setValorItens(item.getValorItens());
 		
 		orcVO.add(itemVO);
 	}
@@ -47,8 +56,8 @@ public class OrcamentoFactory {
 	private OrcamentoEntity transformaEntity(OrcamentoVO orcamento) {
 		OrcamentoEntity orcEntity = new OrcamentoEntity();
 		orcEntity.setDataEmissao(orcamento.getDataEmissao());
-		orcEntity.setQuantidade(orcamento.getQuantidade());
 		orcEntity.setValor(orcamento.getValor());
+		orcEntity.setStatus(orcamento.getStatus());
 		
 		AtomicInteger numeroItem = new AtomicInteger(); 
 		orcamento.getItens().stream().forEach(item -> 
@@ -64,6 +73,9 @@ public class OrcamentoFactory {
 		itemEntity.getId().setOrcamento(orcEntity);
 		itemEntity.setCodigoItem(item.getCodigoItem());
 		itemEntity.setPrecoUnitario(item.getPrecoUnitario());
+		itemEntity.setDescricao(item.getDescricao());
+		itemEntity.setQuantidade(item.getQuantidade());
+		itemEntity.setValorItens(item.getValorItens());
 		
 		orcEntity.add(itemEntity);
 	}
@@ -72,8 +84,7 @@ public class OrcamentoFactory {
 		return this.orcamentoEntity;
 	}
 	
-	public OrcamentoVO toVO() {
-		
+	public OrcamentoVO toVO() {		
 		return this.orcamentoVO;
 	}
 

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.atos.api.orcamento.domain.OrcamentoVO;
+import net.atos.api.orcamento.domain.StatusEnum;
 import net.atos.api.orcamento.factory.OrcamentoFactory;
 import net.atos.api.orcamento.repository.IOrcamentoRepository;
 import net.atos.api.orcamento.repository.OrcamentoEntity;
@@ -32,16 +33,24 @@ public class BuscaOrcamento {
 		OrcamentoEntity orcamentoEntity = this.orcamentoRepository.findById(id)
 				.orElseThrow(()-> new NotFoundException("Orçamento não encontrado com o id: = "+id));
 		
+		if(!orcamentoEntity.getDataEmissao().isAfter(LocalDate.now().minusDays(7L))) {
+			orcamentoEntity.setStatus(StatusEnum.EXPIRADO.getDescricao());
+			orcamentoRepository.save(orcamentoEntity);
+		} else {
+			orcamentoEntity.setStatus(StatusEnum.VALIDO.getDescricao());
+			orcamentoRepository.save(orcamentoEntity);
+		}
+		
 		return new OrcamentoFactory(orcamentoEntity).toVO();
 	}
 	
-	public Page<OrcamentoVO>  porPeriodoDataEmissao(LocalDate dataInicio, LocalDate dataFim, Pageable pageable) {
+	public Page<OrcamentoVO> porPeriodoDataEmissao(LocalDate dataInicio, LocalDate dataFim, Pageable pageable) {
 			
 			Page<OrcamentoEntity> orcamentoEntity = 
 					     orcamentoRepository.findByDataEmissaoBetween(dataInicio,dataFim, pageable);
 			
 			if(orcamentoEntity.isEmpty()) {
-				throw new NotFoundException("Nenhuma nota fiscal para o periodo informado");	
+				throw new NotFoundException("Nenhum orcamento para o periodo informado");	
 			}
 			
 			

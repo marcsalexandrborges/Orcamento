@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +18,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import javax.ws.rs.BadRequestException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,18 +84,14 @@ class CriaOrcamentoTest {
 		var assertThrows = assertThrows(ConstraintViolationException.class, ()->
 							criaOrcamento.criar(orcamento));
 		
-		assertEquals(4, assertThrows.getConstraintViolations().size());
+		assertEquals(1, assertThrows.getConstraintViolations().size());
 		List<String> mensagens = assertThrows.getConstraintViolations()
 		     .stream()
 		     .map(ConstraintViolation::getMessage)
 		     .collect(Collectors.toList());
 
 
-		assertThat(mensagens, hasItems("Campo item não pode ser nulo",
-				"Campo quantidade não pode ser nulo",
-				"Campo valor do orçamento não pode ser nulo",
-				"Campo data de emissão não pode ser nula"
-				));
+		assertThat(mensagens, hasItems("Campo item não pode ser nulo"));
 		
 	}
 	
@@ -109,8 +103,7 @@ class CriaOrcamentoTest {
 		OrcamentoVO orcamento =  new OrcamentoVO();
 		orcamento.setDataEmissao(LocalDate.now());
 		orcamento.setId(1L);
-		orcamento.setQuantidade(1);
-		orcamento.setValor(BigDecimal.ONE);
+		orcamento.setValor(10.0);
 		
 		ItemVO item = new ItemVO();
 		orcamento.add(item);
@@ -118,42 +111,18 @@ class CriaOrcamentoTest {
 		var assertThrows = assertThrows(ConstraintViolationException.class, ()->
 			criaOrcamento.criar(orcamento));
 
-		assertEquals(2, assertThrows.getConstraintViolations().size());
+		assertEquals(4, assertThrows.getConstraintViolations().size());
 		List<String> mensagens = assertThrows.getConstraintViolations()
 		     .stream()
 		     .map(ConstraintViolation::getMessage)
 		     .collect(Collectors.toList());
 		
 		assertThat(mensagens, hasItems("Codigo do item não pode ser nulo",
-				"Campo preço unitario não pode ser nulo"
+				"Campo preço unitario não pode ser nulo",
+				"Campo descricao não pode ser nulo",
+				"Campo quantidade não pode ser nulo"
 				));
 		
-	}
-	
-	@Test	
-	@DisplayName("Testa data de emissão orcamento não diferente do dia atual.")
-	public void testDTDiferenteAtual() {
-		assertNotNull(criaOrcamento);
-
-		OrcamentoVO orcamento =  new OrcamentoVO();
-		orcamento.setDataEmissao(LocalDate.now().minusDays(1l));		
-		orcamento.setId(1L);
-		orcamento.setQuantidade(1);
-		orcamento.setValor(BigDecimal.ONE);
-		
-			
-		ItemVO item = new ItemVO();
-		item.setCodigoItem(1);
-		item.setPrecoUnitario(10.0);
-		orcamento.add(item);
-		
-		var assertThrows = assertThrows(BadRequestException.class, ()->
-			criaOrcamento.criar(orcamento));
-
-		
-		assertEquals(assertThrows.getMessage(),"A data de emissão do orcamento deve ser atual.");
-		
-			
 	}
 	
 	@Test	
@@ -164,13 +133,15 @@ class CriaOrcamentoTest {
 		OrcamentoVO orcamento =  new OrcamentoVO();
 		orcamento.setDataEmissao(LocalDate.now());		
 		orcamento.setId(1L);
-		orcamento.setQuantidade(1);
-		orcamento.setValor(BigDecimal.ONE);
+		orcamento.setValor(10.0);
 		
 			
 		ItemVO item = new ItemVO();
 		item.setCodigoItem(1);
 		item.setPrecoUnitario(10.0);
+		item.setDescricao("Coca-cola");
+		item.setQuantidade(4);
+		item.setValorItens(40.0);
 		orcamento.add(item);
 		
 		criaOrcamento.criar(orcamento);
@@ -178,6 +149,32 @@ class CriaOrcamentoTest {
 		then(orcamentoRepository).should(times(1)).save(any());
 		
 	}
+	
+//	@Test	
+//	@DisplayName("Testa a criação do orcamento com data expirada.")
+//	public void testCriaOrcamentoDataExpirada() {
+//		assertNotNull(criaOrcamento);	
+//		
+//		OrcamentoVO orcamento =  new OrcamentoVO();
+//		orcamento.setDataEmissao(LocalDate.now().minusDays(10L));		
+//		orcamento.setId(1L);
+//		orcamento.setQuantidade(1);
+//		orcamento.setValor(BigDecimal.ONE);
+//		
+//			
+//		ItemVO item = new ItemVO();
+//		item.setCodigoItem(1);
+//		item.setPrecoUnitario(10.0);
+//		orcamento.add(item);
+//		
+//		var assertThrows = assertThrows(BadRequestException.class, ()->
+//		criaOrcamento.criar(orcamento));
+//
+//	
+//		assertEquals(assertThrows.getMessage(),"Orçamento expirado");
+//	
+//		
+//	}
 
 
 }
