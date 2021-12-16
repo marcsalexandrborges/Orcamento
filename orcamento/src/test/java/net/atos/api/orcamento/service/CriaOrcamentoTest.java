@@ -149,32 +149,5 @@ class CriaOrcamentoTest {
 		then(orcamentoRepository).should(times(1)).save(any());
 		
 	}
-	
-//	@Test	
-//	@DisplayName("Testa a criação do orcamento com data expirada.")
-//	public void testCriaOrcamentoDataExpirada() {
-//		assertNotNull(criaOrcamento);	
-//		
-//		OrcamentoVO orcamento =  new OrcamentoVO();
-//		orcamento.setDataEmissao(LocalDate.now().minusDays(10L));		
-//		orcamento.setId(1L);
-//		orcamento.setQuantidade(1);
-//		orcamento.setValor(BigDecimal.ONE);
-//		
-//			
-//		ItemVO item = new ItemVO();
-//		item.setCodigoItem(1);
-//		item.setPrecoUnitario(10.0);
-//		orcamento.add(item);
-//		
-//		var assertThrows = assertThrows(BadRequestException.class, ()->
-//		criaOrcamento.criar(orcamento));
-//
-//	
-//		assertEquals(assertThrows.getMessage(),"Orçamento expirado");
-//	
-//		
-//	}
-
 
 }

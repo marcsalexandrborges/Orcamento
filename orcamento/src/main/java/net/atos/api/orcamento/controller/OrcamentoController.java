@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import net.atos.api.orcamento.config.PageableBinding;
 import net.atos.api.orcamento.domain.OrcamentoVO;
 import net.atos.api.orcamento.service.BuscaOrcamento;
@@ -29,7 +30,7 @@ import net.atos.api.orcamento.service.CriaOrcamento;
 
 @RestController
 @RequestMapping("/v1/orcamento")
-//@Tag(name = "Orcamento")
+@Tag(name = "Orcamento")
 public class OrcamentoController {
 
 	private CriaOrcamento criaOrcamentoService;

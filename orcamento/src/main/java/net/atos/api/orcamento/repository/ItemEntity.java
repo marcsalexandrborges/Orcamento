@@ -10,8 +10,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
-import net.atos.api.orcamento.domain.ItemVO;
-import net.atos.api.orcamento.domain.OrcamentoVO;
 
 @Data
 @Entity

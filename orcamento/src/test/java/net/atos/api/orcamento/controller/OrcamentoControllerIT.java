@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -28,8 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import net.atos.api.orcamento.controller.page.PaginatedResponse;
 import net.atos.api.orcamento.domain.ItemVO;
@@ -41,7 +40,7 @@ import net.atos.api.orcamento.domain.OrcamentoVO;
 @TestPropertySource("classpath:application-test.properties")
 @ActiveProfiles("test")
 public class OrcamentoControllerIT {
-
+	
 	private static final String URI_ORCAMENTO = "/v1/orcamento";
 
 	@Autowired
@@ -57,14 +56,12 @@ public class OrcamentoControllerIT {
 
 	@BeforeAll
 	public void setup() {
-
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 		assertNotNull(this.entityManager);
-
 	}
 
 	@Test
-	@DisplayName("Envio do orcamento sem os campos obrigatórios")
+	@DisplayName("Envio do orcamento sem os campos obrigatorios")
 	public void testEnvioSemDados() throws Exception {
 		OrcamentoVO orcamento = new OrcamentoVO();
 
@@ -77,7 +74,7 @@ public class OrcamentoControllerIT {
 				.andExpect(status().isBadRequest());
 
 	}
-
+	
 	@Test    
     @DisplayName("Cria Orcamento")
     public void testOrcamentoCriado() throws Exception {
