@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import net.atos.api.orcamento.domain.ItemVO;
 import net.atos.api.orcamento.domain.OrcamentoVO;
+import net.atos.api.orcamento.domain.StatusEnum;
 import net.atos.api.orcamento.repository.IOrcamentoRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +50,6 @@ class CriaOrcamentoTest {
 	@BeforeAll
 	public void inicioGeral() {
 		ValidatorFactory validatorFactor = Validation.buildDefaultValidatorFactory();
-
 		this.validator = validatorFactor.getValidator();
 	}
 
@@ -138,6 +138,33 @@ class CriaOrcamentoTest {
 		orcamento.setDataEmissao(LocalDate.now());		
 		orcamento.setId(1L);
 		orcamento.setValor(10.0);
+		orcamento.setStatus(StatusEnum.VALIDO.getDescricao());
+		
+			
+		ItemVO item = new ItemVO();
+		item.setCodigoItem(1);
+		item.setPrecoUnitario(10.0);
+		item.setDescricao("Coca-cola");
+		item.setQuantidade(4);
+		item.setValorItens(40.0);
+		orcamento.add(item);
+		
+		criaOrcamento.criar(orcamento);
+		
+		then(orcamentoRepository).should(times(1)).save(any());
+		
+	}
+	
+	@Test	
+	@DisplayName("Testa a criação do orcamento.")
+	public void testCriaOrcamentoExpirado() {
+		assertNotNull(criaOrcamento);	
+		
+		OrcamentoVO orcamento =  new OrcamentoVO();
+		orcamento.setDataEmissao(LocalDate.now().minusDays(8L));		
+		orcamento.setId(1L);
+		orcamento.setValor(10.0);
+		orcamento.setStatus(StatusEnum.EXPIRADO.getDescricao());
 		
 			
 		ItemVO item = new ItemVO();

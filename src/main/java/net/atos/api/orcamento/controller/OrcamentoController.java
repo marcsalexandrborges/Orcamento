@@ -1,17 +1,10 @@
 package net.atos.api.orcamento.controller;
 
 import java.net.URI;
-import java.time.LocalDate;
 
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 
-import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import net.atos.api.orcamento.config.PageableBinding;
 import net.atos.api.orcamento.domain.OrcamentoVO;
 import net.atos.api.orcamento.service.BuscaOrcamento;
 import net.atos.api.orcamento.service.CriaOrcamento;
@@ -64,21 +56,5 @@ public class OrcamentoController {
 		OrcamentoVO orcamentoEncontrado = buscaOrcamentoService.porId(id);
 
 		return ResponseEntity.ok(orcamentoEncontrado);
-	}
-	
-	@PageableBinding
-	@GetMapping(value = "/emissao-periodos/{dataEmissao}/{dataFim}", produces = { MediaType.APPLICATION_JSON })
-	@Operation(description = "Consulta orcamento por período")
-	public ResponseEntity<Page<OrcamentoVO>> getNotaFiscaisPorPeriodo(
-			@PathVariable("dataEmissao") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataEmissao,
-			@PathVariable("dataFim") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate dataFim,
-			@ParameterObject @PageableDefault(sort = {
-					"dataEmissao" }, direction = Direction.DESC, page = 0, size = 10) Pageable pageable) {
-
-		Page<OrcamentoVO> notasFiscaisEncontradas = this.buscaOrcamentoService.porPeriodoDataEmissao(dataEmissao,
-				dataFim, pageable);
-
-		return ResponseEntity.ok(notasFiscaisEncontradas);
-
 	}
 }

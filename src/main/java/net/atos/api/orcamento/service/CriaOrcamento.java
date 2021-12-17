@@ -68,12 +68,6 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 			return orcamento; 
 	
 		
-		}
-	
-		@Override
-		public boolean isValid(Integer numOrcamento) {
-			return numOrcamento > 0;	
-		}
-		
+		}		
 
 }
