@@ -28,7 +28,7 @@ class OrcamentoFactoryTest {
 		ItemVO item = new ItemVO();
 		item.setCodigoItem(1);
 		item.setPrecoUnitario(10.0);
-		item.setDescricao("Coca-cola");
+		item.setDescricao("Coca");
 		item.setQuantidade(4);
 		item.setValorItens(40.0);
 		orcamento.add(item);

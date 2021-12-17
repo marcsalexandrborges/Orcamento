@@ -8,11 +8,13 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.atos.api.orcamento.domain.OrcamentoVO;
 import net.atos.api.orcamento.domain.StatusEnum;
+import net.atos.api.orcamento.events.OrcamentoCreatedEvent;
 import net.atos.api.orcamento.factory.OrcamentoFactory;
 import net.atos.api.orcamento.repository.IOrcamentoRepository;
 import net.atos.api.orcamento.repository.OrcamentoEntity;
@@ -24,9 +26,12 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 		
 		private IOrcamentoRepository orcamentoRepository;
 		
-		public CriaOrcamento(Validator validator, IOrcamentoRepository repository) {
+		private ApplicationEventPublisher eventPublisher;
+		
+		public CriaOrcamento(Validator validator, IOrcamentoRepository  repository, ApplicationEventPublisher pEventPublisher) {
 			this.validator = validator;
 			this.orcamentoRepository = repository;
+			this.eventPublisher =  pEventPublisher;
 		}
 	
 		@Transactional
@@ -50,19 +55,15 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 			}
 								
 			
-			orcamentoRepository.save(orcamentoEntity);		
+			orcamentoRepository.save(orcamentoEntity);	
+			
+			var orcamentoCreatedEvent = new OrcamentoCreatedEvent(orcamento);
+			
+			this.eventPublisher.publishEvent(orcamentoCreatedEvent);
+			
 			
 			orcamento = new OrcamentoFactory(orcamentoEntity).toVO();
 			
 			return orcamento; 
-	
-		
 		}
-	
-		@Override
-		public boolean isValid(Integer numOrcamento) {
-			return numOrcamento > 0;	
-		}
-		
-
 }

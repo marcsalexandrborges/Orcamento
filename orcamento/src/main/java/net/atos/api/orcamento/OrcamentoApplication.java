@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class OrcamentoApplication {
 
 	public static void main(String[] args) {
-		System.setProperty("file.encoding", "UTF-8");
 		SpringApplication.run(OrcamentoApplication.class, args);
 	}
 
