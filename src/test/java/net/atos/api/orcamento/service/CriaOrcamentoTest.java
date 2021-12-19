@@ -64,7 +64,7 @@ class CriaOrcamentoTest {
 	
 	@Test
 	@DisplayName("Testa quando o orçamento é nulo")
-	void test_quando_notaFiscal_Eh_Null_LancarExcecao() {
+	void testOrcamentoNull() {
 
 		assertNotNull(criaOrcamento);
 

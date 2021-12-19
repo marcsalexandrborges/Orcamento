@@ -30,8 +30,7 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 		
 		public CriaOrcamento(Validator validator, IOrcamentoRepository  repository, ApplicationEventPublisher pEventPublisher) {
 			this.validator = validator;
-			this.orcamentoRepository = repository;
-			
+			this.orcamentoRepository = repository;			
 			this.eventPublisher =  pEventPublisher;
 		}
 	
@@ -42,28 +41,24 @@ import net.atos.api.orcamento.repository.OrcamentoEntity;
 			validateMessages = this.validator.validate(orcamento);
 
 			if (!validateMessages.isEmpty()) {
-				orcamento.setStatus(StatusEnum.INVALIDO.getDescricao());
 				throw new ConstraintViolationException("Orçamento Inválido",validateMessages);
 			}
 			
 			orcamento.setStatus(StatusEnum.VALIDO.getDescricao());
 			
-			OrcamentoEntity orcamentoEntity = new OrcamentoFactory(orcamento).toEntity();	
-			
+			OrcamentoEntity orcamentoEntity = new OrcamentoFactory(orcamento).toEntity();			
 			
 			if(!orcamentoEntity.getDataEmissao().isAfter(LocalDate.now().minusDays(7L))) {
-				orcamento.setStatus(StatusEnum.EXPIRADO.getDescricao());
-			}
-								
+				orcamentoEntity.setStatus(StatusEnum.EXPIRADO.getDescricao());
+			}								
 			
 			orcamentoRepository.save(orcamentoEntity);	
 			
-			var orcamentoCreatedEvent = new OrcamentoCreatedEvent(orcamento);
-			
-			this.eventPublisher.publishEvent(orcamentoCreatedEvent);
-			
-			
 			orcamento = new OrcamentoFactory(orcamentoEntity).toVO();
+			
+			var orcamentoCreatedEvent = new OrcamentoCreatedEvent(orcamento);			
+			
+			this.eventPublisher.publishEvent(orcamentoCreatedEvent);			
 			
 			return orcamento; 
 	

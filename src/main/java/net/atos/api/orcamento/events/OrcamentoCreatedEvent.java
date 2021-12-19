@@ -7,12 +7,11 @@ public class OrcamentoCreatedEvent {
 	private OrcamentoVO orcamento;
 	
 	public OrcamentoCreatedEvent(OrcamentoVO orc) {
-		this.orcamento = orc;		
+		this.orcamento = orc;
 	}
 
-	public OrcamentoVO getNotaFiscal() {
+	public OrcamentoVO getOrcamento() {
 		return orcamento;
 	}
-	
 
 }

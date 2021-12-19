@@ -50,8 +50,8 @@ public class OrcamentoController {
 	}
 	
 	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON })
-	@Operation(description = "Consulta uma nota fiscal por id")
-	public ResponseEntity<OrcamentoVO> getNotaFiscalPorId(@PathVariable("id") Long id) {
+	@Operation(description = "Consulta uma orcamento por id")
+	public ResponseEntity<OrcamentoVO> getOrcamentoPorId(@PathVariable("id") Long id) {
 
 		OrcamentoVO orcamentoEncontrado = buscaOrcamentoService.porId(id);
 

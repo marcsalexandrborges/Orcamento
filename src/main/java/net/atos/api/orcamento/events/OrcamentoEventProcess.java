@@ -25,10 +25,10 @@ public class OrcamentoEventProcess {
 	@TransactionalEventListener
 	public void handleEvent(OrcamentoCreatedEvent event) {
 		
-		OrcamentoVO orcamento = event.getNotaFiscal();
+		OrcamentoVO orcamento = event.getOrcamento();
 		
 		this.rabbitTemplate.convertAndSend("orcamento", 
-				"nf.created.venda", orcamento);
+				"orc.created.pedido", orcamento);
 	}
 	
 	

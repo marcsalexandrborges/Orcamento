@@ -2,8 +2,7 @@ package net.atos.api.orcamento.domain;
 
 public enum StatusEnum {
 	VALIDO(1, "Válido"),
-	INVALIDO(2, "Inválido"),
-	EXPIRADO(3, "Expirado");
+	EXPIRADO(2, "Expirado");
 
 	private Integer codigo;
 	
@@ -20,17 +19,5 @@ public enum StatusEnum {
 
 	public String getDescricao() {
 		return descricao;
-	}
-	
-	public static StatusEnum get(Integer codigo) {
-		if (null != codigo) {
-			for (final StatusEnum status : StatusEnum.values()) {
-				if(status.getCodigo().equals(codigo)) {
-					return status;
-				}
-			}
-		}
-		
-		return INVALIDO;
 	}
 }

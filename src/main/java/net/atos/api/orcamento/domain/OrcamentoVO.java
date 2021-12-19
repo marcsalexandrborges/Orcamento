@@ -18,6 +18,7 @@ import lombok.Data;
 @Data
 public class OrcamentoVO {
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Long id;
 
 	@NotNull(message = "Campo item não pode ser nulo")
